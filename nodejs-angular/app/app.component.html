@@ -1,0 +1,1086 @@
+<body>
+<link href="https://fonts.googleapis.com/icon?family=Material+Icons+Outlined" rel="stylesheet">
+<script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/popper.js@2.9.3/dist/umd/popper.min.js"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+
+<div class="container bg-dark text-white">
+  
+  <div class="row justify-content-center mt-3">
+    
+    <div class="col-md-7">
+      <h2>Product Search</h2>
+      <br>
+      <form #myForm="ngForm">
+        <div class="row mb-3">
+          <label for="Keywords" class="col-md-2 col-sm-3 col-form-label">Keywords <span style="color: red;">*</span></label>
+
+          <div class="col-sm-7" >
+            <input [(ngModel)]="searchKeyword" name="keywords" (ngModelChange)="onInputChange()" [ngClass]="{ 'invalid-input': isInvalidKeyword }" id="Keywords" class="form-control" type="text" placeholder="Enter Product Name (eg. iPhone 8)" aria-label="default input example">
+            <div *ngIf="isInvalidKeyword" class="error-message">Please enter valid words</div>
+
+          </div>
+        </div>
+        <div class="row mb-3">
+          <label class="col-md-2 col-sm-3 col-form-label">Category</label>
+          <div class="col-sm-3 d-flex align-items-center">
+            <select [(ngModel)]="selectedCategory" name="category" class="form-select" aria-label="Default select example">
+              <option selected>All Categories</option>
+              <option value="Art">Art</option>
+              <option value="Baby">Baby</option>
+              <option value="Books">Books</option>
+              <option value="Clothing, Shoes, Accessories">Clothing, Shoes, Accessories</option>
+              <option value="Computers/Tablets & Networking">Computers/Tablets & Networking</option>
+              <option value="Health & Beauty">Health & Beauty</option>
+              <option value="Music">Music</option>
+              <option value="Video Games & Consoles">Video Games & Consoles</option>
+            </select>
+          </div>
+        </div>
+        <div class="row mb-3">
+          <label class="col-md-2 col-sm-3 col-form-label align-items-center">Conditions</label>
+          <div class="col-sm-10 col-sm-9 d-flex align-items-center">
+            <div class="form-check form-check-inline">
+              <input class="form-check-input" type="checkbox" id="condition-new" [(ngModel)]="newCondition" name="newCondition" value="New">
+              <label class="form-check-label" for="condition-new">New</label>
+            </div>
+            <div class="form-check form-check-inline">
+              <input class="form-check-input" type="checkbox" id="condition-used" [(ngModel)]="usedCondition" name="usedCondition" value="Used">
+              <label class="form-check-label" for="condition-used">Used</label>
+            </div>
+            <div class="form-check form-check-inline">
+              <input class="form-check-input" type="checkbox" id="condition-unspecified" [(ngModel)]="unspecifiedCondition" name="unspecifiedCondition" value="Unspecified">
+              <label class="form-check-label" for="condition-unspecified">Unspecified</label>
+            </div>
+          </div>
+        </div>
+        <div class="row mb-3">
+          <label class="col-md-2 col-sm-3 col-form-label align-items-center">Shipping Options</label>
+          <div class="col-sm-10 col-sm-9 d-flex align-items-center">
+            <div class="form-check form-check-inline">
+              <input [(ngModel)]="localPickup" name="shippingOptions" value="Local Pickup" class="form-check-input" type="checkbox" id="pickup">
+              <label class="form-check-label" for="pickup">Local Pickup</label>
+            </div>
+            <div class="form-check form-check-inline">
+              <input [(ngModel)]="freeShipping" name="shippingOptions" value="Free Shipping" class="form-check-input" type="checkbox" id="freeshipping">
+              <label class="form-check-label" for="freeshipping">Free Sheeping</label>
+            </div>
+          </div>
+        </div>
+        <!-- <div class="row mb-3">
+          <label for="distance" class="col-md-2 col-sm-3 col-form-label align-items-center">Distance (Miles)</label>
+          <div class="col-sm-3 d-flex align-items-center">
+            <input [(ngModel)]="distanceMiles" name="distanceMiles" id="distance" class="form-control" type="text" placeholder="10" aria-label="default input example">
+          </div>
+        </div> -->
+        
+        <div class="row mb-3 align-items-center">
+          <label for="distance" class="col-md-2 col-sm-3 col-form-label align-items-center">Distance (Miles)</label>
+          <div class="col-sm-3">
+            <div class="input-group">
+              <input type="number" [(ngModel)]="distanceMiles" name="distanceMiles" id="distance" class="form-control" placeholder="10" aria-label="Distance in miles">
+              
+              
+            </div>
+          </div>
+        </div>
+        <!-- class="col-sm-2 col-form-label align-items-center" -->
+        <div class="row mb-3">
+          <div class="col-sm-2 col-form-label">
+            <label>From <span style="color: red;">*</span></label>
+          </div>
+          <div class="col-sm-7">
+            <div class="form-check">
+              <input class="form-check-input" type="radio" name="locationOptions" id="currentlocation" value="currentlocation" [(ngModel)]="selectedOption" (ngModelChange)="updateSelectedOption('currentlocation')">
+              <label class="form-check-label" for="currentlocation">
+                Current Location
+              </label>
+            </div>
+            <div class="form-check">
+              <input class="form-check-input" type="radio" name="locationOptions" id="otherzip" value="otherzip" [(ngModel)]="selectedOption" (ngModelChange)="updateSelectedOption('otherzip')">
+              <label class="form-check-label" for="otherzip">
+                Other. Please specify zip code:
+              </label>
+            </div>
+            <div class="mt-2">
+              <!-- <input matInput [(ngModel)]="postal" class="form-control" type="text" 
+                     pattern="[0-9]{5}" aria-label="default input example" 
+                     name="postal" required [disabled]="selectedOption !== 'otherzip'" 
+                     [ngClass]="{ 'invalid-input': isInvalidPostal }"
+                     (keyup)="onKeyUp($event)">
+              <mat-autocomplete #auto="matAutocomplete" class="zip-autocomplete position-absolute">
+                <mat-option *ngFor="let option of filteredOptions" [value]="option.postalCode">
+                  {{ option.postalCode }}
+                </mat-option>
+              </mat-autocomplete> -->
+
+              <input matInput (keyup)="onKeyUp($event)" (input)="onInputChange()"
+                [matAutocomplete]="auto"
+                [(ngModel)]="postal" class="form-control" type="text" 
+                pattern="[0-9]{5}" aria-label="default input example" 
+                name="postal" required [disabled]="selectedOption !== 'otherzip'" 
+                [ngClass]="{ 'invalid-input': isInvalidPostal }">
+                
+
+                <mat-autocomplete #auto="matAutocomplete" class="zip-autocomplete position-absolute" (optionSelected)="onOptionSelected()">
+                  <mat-option *ngFor="let option of filteredOptions" [value]="option.postalCode" class="col-md-2 col-sm-3 col-form-label">
+                    {{ option.postalCode }}
+                  </mat-option>
+                </mat-autocomplete>
+              <div *ngIf="isInvalidPostal" class="error-message text-danger">Please enter a valid zip code</div>
+            </div>
+          </div>
+        </div>
+        
+        
+        
+       
+        <div class="row mb-3">
+          <div class="col-sm-10">
+            <button type="button" class="btn btn-primary btn-light text-dark myb" (click)="fetchData()" [disabled]="isSearchButtonDisabled() || !searchKeyword.trim() "><i class="material-icons-outlined">search</i>Search</button>
+            <button type="button" class="btn btn-primary btn-light text-dark myb" (click)="clearForm()" ><i class="material-icons-outlined">clear_all</i>Clear</button>
+          
+          </div>
+        </div>
+        
+        
+      </form>
+    </div>
+  </div>
+</div>
+
+<div class="d-flex justify-content-center align-items-center bg-white">
+  
+<!-- <div class="btn-group" role="group" aria-label="Basic radio toggle button group">
+  <input (click)="view ='results'" type="radio" class="btn-check" name="btnradio" id="btnradio1" autocomplete="off" checked>
+  <label [ngClass]="view === 'results' ? 'btn bg-dark text-white' : 'btn bg-white text-dark'" for="btnradio1">Results</label>
+  
+  <input (click)="view ='wish'" type="radio" class="btn-check" name="btnradio" id="btnradio2" autocomplete="off">
+  <label [ngClass]="view === 'wish' ? 'btn bg-dark text-white' : 'btn bg-white text-dark'" for="btnradio2">Wish List</label>
+</div> -->
+<div class="btn-group" role="group" aria-label="Basic radio toggle button group">
+  <input (click)="switchToResultsView()" type="radio" class="btn-check" name="btnradio" id="btnradio1" autocomplete="off" checked>
+  <label [ngClass]="view === 'results' ? 'btn bg-dark text-white' : 'btn bg-white text-dark'" for="btnradio1">Results</label>
+  
+  <input (click)="switchToWishView()" type="radio" class="btn-check" name="btnradio" id="btnradio2" autocomplete="off">
+  <label [ngClass]="view === 'wish' ? 'btn bg-dark text-white' : 'btn bg-white text-dark'" for="btnradio2">Wish List</label>
+</div>
+
+<br>
+
+</div>
+
+<div class='container'>
+<div class="progress" *ngIf="progressbar">
+  <div class="progress-bar progress-bar-striped progress-bar-animated" role="progressbar" aria-valuenow="100" aria-valuemin="0" aria-valuemax="100" style="width: 100%"></div>
+</div>
+</div>
+
+<ng-container *ngIf="view === 'results' && showResults">
+
+ 
+
+<div class="parent-container"> 
+  <ng-container *ngIf="!isViewingDetails"> <!-- for the detail button -->
+    <ng-container *ngIf="data$ | async as data">
+    <div class="norecords bg-white">
+      <div *ngIf="!(data?.findItemsAdvancedResponse[0]?.searchResult[0]?.item?.length)" class="alert alert-warning full-width-alert" role="alert">
+        No Records.
+      </div>
+  
+    </div>
+    
+    
+    <div class="resultsDIV">
+      <div class="button-container">
+      <button class="detailsButton" 
+    [disabled]="!isDetailsButtonEnabled" 
+    (click)="showLastViewedDetails()">Detail<i class="material-icons">chevron_right</i></button>
+      </div>
+    <!-- <div class="row justify-content-center"> -->
+      
+    <ng-container *ngIf="data?.findItemsAdvancedResponse[0]?.searchResult[0]?.item?.length">
+
+      
+    <div class="results-table">
+    <table class="usetable">
+      <thead>
+        <tr class="bg-dark">
+          <th class="text-white">#</th>
+          <th class="text-white">Image</th>
+          <th class="text-white titleHeader">Title</th>
+          <th class="text-white">Price</th>
+          <th class="text-white">Shipping</th>
+          <th class="text-white">Zip</th>
+          <th class="text-white">WishList</th>
+        </tr>
+      </thead>
+      <tbody>
+
+        <tr *ngFor="let item of data.findItemsAdvancedResponse[0].searchResult[0].item.slice((currentPage-1)*itemsPerPage, currentPage*itemsPerPage); let i = index" [ngStyle]="{'background-color': isCurrentItem(item) ? 'lightgrey' : ''}">
+        <!-- <tr *ngFor="let item of data.findItemsAdvancedResponse[0].searchResult[0].item; let i = index"> -->
+          
+          <td class="text-white">{{ (currentPage-1)*itemsPerPage + i + 1}}</td>
+          <!-- “galleryURL” object inside the “item” object. -->
+          <td class="text-white">
+            <img [src]="item.galleryURL[0]" height="100" width="100" alt="Product Image" (click)="enlargeImage(item.galleryURL[0])">
+          </td>
+          <td class="text-white titleColumn" data-toggle="tooltip"  style="width: 150px;" title="{{ item.title[0] }}" (click)="showDetails(item); highlightRow(i);">
+            <!-- {{ item.title[0] }} -->
+            <!-- <ng-container *ngIf="item.title[0]?.length >35 ; else fullTitle">
+              {{shortTitle(item.title[0])}}
+            </ng-container>
+            <ng-template #fullTitle>{{ item.title[0] }}</ng-template> -->
+            {{ item.title[0].length > 35 ? (item.title[0] | slice:0:35) + '...' : item.title[0] }}
+          </td>
+          <!-- the “currentPrice” object inside the “sellingStatus” object which is part of the “item” object. -->
+          <td class="text-white">${{ item.sellingStatus[0].currentPrice[0].__value__ }}</td>
+          <td class="text-white shippingWidth">
+            
+            <ng-container *ngIf="item.shippingInfo[0].shippingServiceCost[0].__value__ === '0.0'; else notFree">
+              Free Shipping
+            </ng-container>
+            <ng-template #notFree>
+              <ng-container *ngIf="item.shippingInfo[0].shippingServiceCost; else na">
+                ${{ item.shippingInfo[0].shippingServiceCost[0].__value__ }}
+              </ng-container>
+              <ng-template #na>N/A</ng-template>
+            </ng-template>
+          </td>
+          <td class="text-center text-white">{{ item.postalCode[0] }}</td>
+          <td class="text-center text-white">
+            <!-- <button class="btn btn-icon" (click)="addToWishList(item)">
+              <span *ngIf="!isItemInWishList(item)" class="material-icons-outlined">add_shopping_cart</span>
+              <span *ngIf="isItemInWishList(item)" class="material-icons-outlined">remove_shopping_cart</span>
+
+            </button>             -->
+            <button class="btn btn-icon" 
+        (click)="isItemInWishList(item) ? removeItemFromDatabase(item) : addToWishList(item)">
+    <span *ngIf="!isItemInWishList(item)" class="material-icons-outlined add">add_shopping_cart</span>
+    <span *ngIf="isItemInWishList(item)" class="material-icons-outlined remove">remove_shopping_cart</span>
+</button>
+
+          </td>
+        </tr>
+      </tbody>
+    </table>
+    </div>
+
+    <div *ngIf="showLargeImage" class="overlay" (click)="showLargeImage = false">
+      <img [src]="selectedImage" class="centered-image" alt="Enlarged Image">
+    </div>
+  </ng-container>
+  
+  </div>
+  <div class="bg-white" id="pagepart" >
+    <div *ngIf="data?.findItemsAdvancedResponse[0]?.searchResult[0]?.item?.length">
+      <nav aria-label="Page navigation example" >
+        <ul class="pagination justify-content-center bg-white mt-3">
+          <li class="page-item text-dark" [class.disabled]="currentPage === 1">
+            <a class="page-link text-dark" (click)="decrementPage()">« Previous</a>
+          </li>
+          <li class="page-item text-dark" 
+              *ngFor="let page of [].constructor(Math.ceil(data.findItemsAdvancedResponse[0].searchResult[0].item.length / itemsPerPage)); let i = index" 
+              [class.active]="i+1 === currentPage">
+            <a class="page-link text-dark" (click)="currentPage = i + 1">{{ i + 1 }}</a>
+          </li>
+          <li class="page-item text-dark" [class.disabled]="currentPage === Math.ceil(data.findItemsAdvancedResponse[0].searchResult[0].item.length / itemsPerPage)">
+            <a class="page-link text-dark" (click)="incrementPage()">Next »</a>
+          </li>
+        </ul>
+      </nav>
+    </div>
+  </div>
+  
+  
+</ng-container>
+
+</ng-container>
+
+
+<ng-container *ngIf="isViewingDetails"> <!-- Check Detail start -->
+  
+  <div class="item-details">  <!-- Item Detail Div Start -->
+    
+    <div *ngIf="showModal" class="modal">
+      <div class="modal-content">
+        
+        <h2 class="modal-title">Product Images</h2>
+        <span class="close" (click)="closeModal()">&times;</span>
+        <div class="carousel">
+          <a class="prev" (click)="previousImage()">&#10094;</a>
+          <div class="image-viewport">
+          <div *ngFor="let imageUrl of selectedItemDetails.Item.PictureURL; let i = index" [ngClass]="{'active-img': i === currentImageIndex}">
+            <img [src]="imageUrl" class="responsive-img">
+          </div>
+          </div>
+          <a class="next" (click)="nextImage()">&#10095;</a>
+        </div>
+        <button class="close-button" (click)="closeModal()">Close</button>
+      </div>
+    </div>
+   
+
+    
+    
+    <!-- <button (click)="goBackToList()" class="listButton">
+      <i class="material-icons">chevron-left</i> <span>List</span>
+    </button> -->
+    <!-- <button (click)="goBackToList()" class="btn btn-light btn-sm rounded-pill listButton">
+      <i class="material-icons">chevron_left</i> List
+    </button> -->
+    <ng-container *ngIf="getMatchedItemDetails(selectedItemDetails?.Item?.ItemID) | async as matchedItem">
+      <div class="selecteditemtitle">
+      {{selectedItemDetails.Item.Title }}
+      </div>
+    <div class="allbutton">
+    <div class="listButtonContainer">
+      <button (click)="goBackToList()" class="listButton">
+        <i class="material-icons">chevron_left</i> List
+      </button>
+      </div>
+    <div class="FBandCart">
+      
+    <a [href]="getFacebookShareUrl(selectedItemDetails?.Item?.ViewItemURLForNaturalSearch)" target="_blank">
+      <img src="assets/facebook.png" alt="Facebook Share" class="custom-fb-icon"/>
+    </a>
+
+    <!-- <ng-container *ngIf="getMatchedItemDetails(selectedItemDetails?.Item?.ItemID) | async as matchedItem"> -->
+      <button class="btn btn-icon" 
+      (click)="isItemInWishList(matchedItem) ? removeItemFromDatabase(matchedItem) : addToWishList(matchedItem)">
+      <span *ngIf="!isItemInWishList(matchedItem)" class="material-icons-outlined add">add_shopping_cart</span>
+      <span *ngIf="isItemInWishList(matchedItem)" class="material-icons-outlined remove">remove_shopping_cart</span>
+      </button>
+    
+    </div>
+  </div>
+</ng-container>
+  
+
+    <div class="tabs-container">
+      <div *ngFor="let tab of tabs" (click)="selectTab(tab)" [ngClass]="{'active-tab': activeTab === tab}" class="tab">
+          {{tab}}
+      </div>
+    </div>
+
+
+    <hr> <!-- the line below tabs-->
+
+
+    <div [ngSwitch]="activeTab" class="alltabsdiv"> <!-- Tab Div Start-->
+
+      <div *ngSwitchCase="'Product'"> <!-- Product Tab Start-->
+          <table class="table text-white bg-dark table-dark table-striped products">
+            <tbody>
+              <!-- Product Images -->
+              <tr *ngIf="selectedItemDetails.Item.PictureURL?.length">
+                <th>Product Images</th>
+                <td>
+                  <!-- <div *ngFor="let imageUrl of selectedItemDetails.Item.PictureURL">
+                    <img [src]="imageUrl" width="100" height="100">
+                  </div> -->
+                  <a href="javascript:void(0);" (click)="openModal()" style="color: green; text-decoration: none;">View Product Images Here</a>
+
+                </td>
+              </tr>
+
+              <!-- Price -->
+              <tr *ngIf="selectedItemDetails.Item.ConvertedCurrentPrice?.Value">
+                <th>Price</th>
+                <td>{{ selectedItemDetails.Item.ConvertedCurrentPrice.Value }}</td>
+              </tr>
+
+              <!-- Location -->
+              <tr *ngIf="selectedItemDetails.Item.Location">
+                <th>Location</th>
+                <td>{{ selectedItemDetails.Item.Location }}</td>
+              </tr>
+
+              <!-- Return Policy -->
+              <tr *ngIf="selectedItemDetails.Item.ReturnPolicy">
+                <th>Return Policy</th>
+                <td>Returns Accepted Within {{ selectedItemDetails.Item.ReturnPolicy.ReturnsWithin }}</td>
+              </tr>
+
+              <!-- Item Specifics -->
+              <ng-container *ngIf="selectedItemDetails.Item.ItemSpecifics?.NameValueList">
+                <tr *ngFor="let specific of selectedItemDetails.Item.ItemSpecifics.NameValueList">
+                  <th>{{ specific.Name }}</th>
+                  <td>{{ specific.Value[0] }}</td>
+                </tr>
+              </ng-container>
+
+            </tbody>
+          </table>
+  </div> <!-- Product Div Close-->
+  <div *ngSwitchCase="'Photos'" class="allphotos"> <!-- Start Photo Div-->
+  
+      <div *ngIf="photos.length > 0" class="mt-3 photos-div">  <!--container-->
+        <div class="google-image-container">
+        <ng-container *ngFor="let photo of photos; let i = index">
+          <div class="image-column" *ngIf="i % 3 === 0">
+            <div *ngFor="let columnItem of photos.slice(i, i + 3)">
+              <a [href]="photo" target="_blank">
+              <img [src]="photo" alt="Photo">
+              </a>
+            </div>
+          </div>
+        </ng-container> 
+        </div>
+      </div>
+
+      <div *ngIf="photos.length === 0">
+        No photos available.
+      </div>
+
+     
+
+  </div> <!-- Close Photo Div-->
+  <div *ngSwitchCase="'Shipping'"> <!-- Start Shipping Div-->
+    <ng-container *ngIf="selectedItemDetails?.Item?.ItemID as itemId">
+      
+      <ng-container *ngIf="(getMatchedItemShippingInfo(itemId) | async) as matchedShippingInfo">
+        <table class="table text-white bg-dark table-dark table-striped ships">
+          <tbody>
+            <!-- Shipping Cost -->
+            <tr *ngIf="matchedShippingInfo?.[0]?.shippingServiceCost?.[0]?.__value__">
+              <th>Shipping Cost</th>
+              <td>{{ matchedShippingInfo[0].shippingServiceCost[0].__value__ }}</td>
+            </tr>
+  
+            <!-- Shipping Locations -->
+            <tr *ngIf="matchedShippingInfo?.[0]?.shipToLocations?.length">
+              <th>Shipping Locations</th>
+              <td>{{ matchedShippingInfo[0].shipToLocations[0] }}</td>
+            </tr>
+  
+            <!-- Handling Time -->
+            <tr *ngIf="matchedShippingInfo?.[0]?.handlingTime?.length">
+              <th>Handling Time</th>
+              <td>
+                {{ matchedShippingInfo[0].handlingTime[0] }}
+                {{ matchedShippingInfo[0].handlingTime[0] > 1 ? 'Days' : 'Day' }}
+              </td>
+            </tr>
+  
+            <!-- Expedited Shipping -->
+            <tr *ngIf="matchedShippingInfo?.[0]?.expeditedShipping?.length">
+              <th>Expedited Shipping</th>
+              <td>
+                <i *ngIf="matchedShippingInfo[0].expeditedShipping[0] === 'true'"
+                   class="material-icons" style="color: green;">check</i>
+                <i *ngIf="matchedShippingInfo[0].expeditedShipping[0] !== 'true'"
+                   class="material-icons" style="color: red;">close</i>
+              </td>
+            </tr>
+  
+            <!-- One Day Shipping -->
+            <tr *ngIf="matchedShippingInfo?.[0]?.oneDayShippingAvailable?.length">
+              <th>One Day Shipping</th>
+              <td>
+                <i *ngIf="matchedShippingInfo[0].oneDayShippingAvailable[0] === 'true'"
+                   class="material-icons" style="color: green;">check</i>
+                <i *ngIf="matchedShippingInfo[0].oneDayShippingAvailable[0] !== 'true'"
+                   class="material-icons" style="color: red;">close</i>
+              </td>
+            </tr>
+  
+            <!-- Return Accepted -->
+            
+            <tr *ngIf="matchedShippingInfo?.[0]?.returnsAccepted?.length">
+              <th>Return Accepted</th>
+              <td>
+                <i *ngIf="matchedShippingInfo[0].returnsAccepted[0] === 'true'"
+                   class="material-icons" style="color: green;">check</i>
+                <i *ngIf="matchedShippingInfo[0].returnsAccepted[0] !== 'true'"
+                   class="material-icons" style="color: red;">close</i>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </ng-container>
+    </ng-container>
+  </div><!-- Close Shipping Div-->
+  <div *ngSwitchCase="'Seller'"> <!-- Start Seller Div -->
+    <ng-container *ngIf="selectedItemDetails?.Item?.Seller">
+      <table class="table text-white bg-dark table-dark table-striped sales">
+        <tbody>
+
+
+          <!-- Capital store name-->
+          <tr *ngIf="selectedItemDetails.Item.Storefront?.StoreName">
+            <td colspan="2" class="text-center store-name-header">
+              {{ formatStoreName(selectedItemDetails.Item.Storefront.StoreName) }}
+            </td>
+          </tr>
+          
+
+
+
+          <!-- Feedback Score -->
+          <tr *ngIf="selectedItemDetails.Item.Seller.FeedbackScore !== undefined">
+            <th>Feedback Score</th>
+            <td>
+              <!-- <i class="material-icons" [style.color]="getFeedbackStarColor(selectedItemDetails.Item.Seller.FeedbackRatingStar)">
+                {{ selectedItemDetails.Item.Seller.FeedbackScore >= 10000 ? 'stars' : 'star_border' }}
+              </i> -->
+              {{ selectedItemDetails.Item.Seller.FeedbackScore }}
+            </td>
+          </tr>
+
+
+          <!-- Popularity -->
+          <tr *ngIf="selectedItemDetails.Item.Seller.PositiveFeedbackPercent !== undefined">
+            <th>Popularity</th>
+
+
+            <td>
+              <div class="green-circle">
+              {{ selectedItemDetails.Item.Seller.PositiveFeedbackPercent }}
+              </div>
+            </td>
+          </tr>
+          
+          <!-- Feedback Rating Star -->
+          <tr *ngIf="selectedItemDetails.Item.Seller.FeedbackRatingStar !== undefined">
+            <th>Feedback Rating Star</th>
+           
+  
+             
+              <td>
+                  <span *ngIf="selectedItemDetails.Item.Seller.FeedbackScore > 10000">
+                      <i class="material-icons" 
+                      [style.color]="sanitizeFeedbackRatingStar(selectedItemDetails.Item.Seller.FeedbackRatingStar)">stars</i>
+                  </span>
+                  <span *ngIf="selectedItemDetails.Item.Seller.FeedbackScore <= 10000">
+                      <i class="material-icons"
+                      [style.color]="selectedItemDetails.Item.Seller.FeedbackRatingStar">star_border</i>
+                  </span>
+              </td>
+          </tr>
+
+
+   
+          
+          
+          <!-- Top Rated -->
+          <tr *ngIf="selectedItemDetails.Item.Seller.TopRatedSeller !== undefined">
+            <th>Top Rated</th>
+            <td>
+              <i *ngIf="selectedItemDetails.Item.Seller.TopRatedSeller" class="material-icons" style="color: green;">check_circle</i>
+              <i *ngIf="!selectedItemDetails.Item.Seller.TopRatedSeller" class="material-icons" style="color: red;">cancel</i>
+            </td>
+          </tr>
+          
+          <!-- Store Name -->
+          <tr *ngIf="selectedItemDetails.Item.Storefront?.StoreName">
+            <th>Store Name</th>
+            <td>
+              <!-- <a [href]="selectedItemDetails.Item.Storefront.StoreURL" target="_blank"> -->
+                {{ selectedItemDetails.Item.Storefront.StoreName }}
+              <!-- </a> -->
+            </td>
+          </tr>
+
+          <tr *ngIf="selectedItemDetails.Item.Storefront?.StoreURL">
+            <th>Buy Product At</th>
+            <td class="storelink"><a href="{{ selectedItemDetails.Item.Storefront.StoreURL }}" style="color: green;text-decoration: none;" target="_blank">Store</a></td>
+          </tr>
+  
+        </tbody>
+      </table>
+    </ng-container>
+  </div><!-- Close Seller Div -->
+  <!--
+    https://svcs.ebay.com/MerchandisingService?OPERATION-NAME=getSimilarItems&SERVICE-NAME
+    =MerchandisingService&SERVICE-VERSION=1.1.0&CONSUMER-ID=WilliamL-hw2-PRD-aaf878574-a94ce998&RESPONSE-DATA-FORMAT=JSON&REST- 
+    PAYLOAD&itemId=394884844909&maxResults=20
+  -->
+  <div *ngSwitchCase="'Similar Products'"> <!-- Similar Products start div-->
+    <div *ngIf="similarProducts && similarProducts.length > 0">
+      <select [(ngModel)]="sortCategory" style="margin-right: 10px;margin-bottom:10px; padding-top: 5px; padding-bottom: 5px; padding-left: 5px;" (change)="sortProducts()">
+        <option value="default">Default</option>
+        <option value="productName">Product Name</option>
+        <option value="daysLeft">Days Left</option>
+        <option value="price">Price</option>
+        <option value="shippingCost">Shipping Cost</option>
+      </select>
+
+      <select [(ngModel)]="sortOrder" style="padding-top: 5px;margin-bottom:10px; padding-bottom: 5px; padding-left: 5px;" [disabled]="sortCategory === 'default'" (change)="sortProducts()">
+        <option value="asc">Ascending</option>
+        <option value="desc">Descending</option>
+      </select>
+    
+      <div *ngFor="let product of getDisplayedProducts()" class="product-card">
+        <div class="product-image-container">
+          <img [src]="product.imageURL" [alt]="product.title" class="product-image">
+        </div>
+        
+        <div class="product-details">
+          <p class="product-title">{{ product.title }}</p>
+          <p class="product-price">Price: {{ product.buyItNowPrice['__value__'] | currency }}</p>
+          <p class="product-shipping-cost">Shipping Cost: {{ product.shippingCost['__value__'] | currency }}</p>
+          <p class="card-text">Days Left: {{ extractDays(product.timeLeft) }}</p>
+ 
+        </div>
+      </div>
+      <button *ngIf="sortedProducts.length > 5" (click)="toggleShowAll()" class="btn btn-primary show-hide-button">
+        {{ showAll ? 'Show Less' : 'Show More' }}
+      </button>
+    </div>
+    <div *ngIf="!similarProducts || similarProducts.length === 0">
+      <div class="norecords bg-white">
+        <div class="alert alert-warning full-width-alert" role="alert">
+          No Records.
+        </div>
+      </div>
+    </div>
+  </div> <!-- Similar Products Close Div-->
+
+  </div> <!-- Tab Div Close-->
+</div>
+</ng-container>
+</div>
+
+  
+
+
+</ng-container> <!-- Results Big Tab Close-->
+
+ <!---------------------------------------------------------------------------- Wish List -------------------------------------------------------------------------------------------------------------------> 
+<div *ngIf="view==='wish'" class="wish-view-container">
+  
+
+
+  <ng-container *ngIf="!isViewingDetails">
+    <div class="button-container">
+    <button class="detailsButton" 
+    [disabled]="!isDetailsButtonEnabled" 
+    (click)="showLastViewedDetails()">Detail<i class="material-icons">chevron_right</i></button>
+    </div>
+  <ng-container *ngIf="wishData$ | async as wishData">
+    <ng-container *ngIf="wishData && wishData.length > 0; else noRecords">
+      
+    <!-- <div class="row justify-content-center">
+      
+    <div class="col-md-7" id="wishlistss"> -->
+
+      
+      <div class="phonewish">
+      <table class="usetable">
+        <thead>
+          <tr class="bg-dark">
+            <th>#</th>
+            <th>Image</th>
+            <th class="titleHeader">Title</th>
+            <th>Price</th>
+            <th>Shipping Option</th>
+            <th>Favorite</th>
+          </tr>
+        </thead>
+        <tbody>
+    <tr *ngFor="let item of wishData; let i = index">
+    
+     
+      <td>{{ i + 1 }}</td>
+      <td><img [src]="item.galleryURL" alt="Image" width="100" height="100"></td>
+
+
+      <td class="titleColumn" data-toggle="tooltip" title="{{item.title}}">
+<!-- 
+        <ng-container>
+          
+          {{ item.title.length > 35 ? (item.title | slice:0:35) + '...' : item.title }}
+        </ng-container>
+      -->
+      {{ item.title.length > 35 ? (item.title | slice:0:35) + '...' : item.title }}
+
+      </td>
+ 
+      <td>${{ item.currentPrice }}</td>
+      <td>{{ item.shippingServiceCost === 0 ? 'Free Shipping' : '$' + item.shippingServiceCost }}</td>
+      <td>  
+      <button class="btn btn-icon" 
+      (click)="removeItemFromDatabase(item)">
+      <span class="material-icons-outlined remove">remove_shopping_cart</span>
+      </button>
+        </td>
+        </tr>
+      </tbody>
+    
+    <tfoot>
+      <tr [ngClass]="{ 'even-row': wishData.length % 2 === 0, 'odd-row': wishData.length % 2 !== 0 }">
+          <td colspan="5" class="text-end">Total Shopping:</td>
+          <td>${{ getTotalShippingCost(wishData) }}</td>
+      </tr>
+  </tfoot>
+  
+      </table>
+    </div>
+      <!-- </div>
+    </div> -->
+  </ng-container>
+  <ng-template #noRecords>
+    <div class="alert alert-warning full-width-alert" role="alert">
+      No Records.
+    </div>
+
+  </ng-template>
+</ng-container>
+</ng-container>
+
+<!---------------------------------------------------------------------------------------- the Detail button in the wishlist---------------------------------------------------------------------------------------->
+<ng-container *ngIf="isViewingDetails"> <!-- Check Detail start -->
+  
+  <div class="item-details">  <!-- Item Detail Div Start -->
+    
+    <div *ngIf="showModal" class="modal">
+      <div class="modal-content">
+        
+        <h2 class="modal-title">Product Images</h2>
+        <span class="close" (click)="closeModal()">&times;</span>
+        <div class="carousel">
+          <a class="prev" (click)="previousImage()">&#10094;</a>
+          <div class="image-viewport">
+          <div *ngFor="let imageUrl of selectedItemDetails.Item.PictureURL; let i = index" [ngClass]="{'active-img': i === currentImageIndex}">
+            <img [src]="imageUrl" class="responsive-img">
+          </div>
+          </div>
+          <a class="next" (click)="nextImage()">&#10095;</a>
+        </div>
+        <button class="close-button" (click)="closeModal()">Close</button>
+      </div>
+    </div>
+  
+
+    
+    
+    <!-- <button (click)="goBackToList()" class="listButton">
+      <i class="material-icons">chevron-left</i> <span>List</span>
+    </button> -->
+    <!-- <button (click)="goBackToList()" class="btn btn-light btn-sm rounded-pill listButton">
+      <i class="material-icons">chevron_left</i> List
+    </button> -->
+    <ng-container *ngIf="getMatchedItemDetails(selectedItemDetails?.Item?.ItemID) | async as matchedItem">
+      <div class="selecteditemtitle">
+      {{selectedItemDetails.Item.Title }}
+      </div>
+    <div class="allbutton">
+    <div class="listButtonContainer">
+      <button (click)="goBackToList()" class="listButton">
+        <i class="material-icons">chevron_left</i> List
+      </button>
+      </div>
+    <div class="FBandCart">
+      
+    <a [href]="getFacebookShareUrl(selectedItemDetails?.Item?.ViewItemURLForNaturalSearch)" target="_blank">
+      <img src="assets/facebook.png" alt="Facebook Share" class="custom-fb-icon"/>
+    </a>
+
+    <!-- <ng-container *ngIf="getMatchedItemDetails(selectedItemDetails?.Item?.ItemID) | async as matchedItem"> -->
+      <button class="btn btn-icon" 
+      (click)="isItemInWishList(matchedItem) ? removeItemFromDatabase(matchedItem) : addToWishList(matchedItem)">
+      <span *ngIf="!isItemInWishList(matchedItem)" class="material-icons-outlined add">add_shopping_cart</span>
+      <span *ngIf="isItemInWishList(matchedItem)" class="material-icons-outlined remove">remove_shopping_cart</span>
+      </button>
+    
+    </div>
+  </div>
+</ng-container>
+
+
+    <div class="tabs-container">
+      <div *ngFor="let tab of tabs" (click)="selectTab(tab)" [ngClass]="{'active-tab': activeTab === tab}" class="tab">
+          {{tab}}
+      </div>
+    </div>
+
+
+    <hr> <!-- the line below tabs-->
+
+
+    <div [ngSwitch]="activeTab"> <!-- Tab Div Start-->
+
+      <div *ngSwitchCase="'Product'"> <!-- Product Tab Start-->
+          <table class="table text-white bg-dark table-dark table-striped">
+            <tbody>
+              <!-- Product Images -->
+              <tr *ngIf="selectedItemDetails.Item.PictureURL?.length">
+                <th>Product Images</th>
+                <td>
+                  <!-- <div *ngFor="let imageUrl of selectedItemDetails.Item.PictureURL">
+                    <img [src]="imageUrl" width="100" height="100">
+                  </div> -->
+                  <a href="javascript:void(0);" (click)="openModal()" style="color: green; text-decoration: none;">View Product Images Here</a>
+
+                </td>
+              </tr>
+
+              <!-- Price -->
+              <tr *ngIf="selectedItemDetails.Item.ConvertedCurrentPrice?.Value">
+                <th>Price</th>
+                <td>{{ selectedItemDetails.Item.ConvertedCurrentPrice.Value }}</td>
+              </tr>
+
+              <!-- Location -->
+              <tr *ngIf="selectedItemDetails.Item.Location">
+                <th>Location</th>
+                <td>{{ selectedItemDetails.Item.Location }}</td>
+              </tr>
+
+              <!-- Return Policy -->
+              <tr *ngIf="selectedItemDetails.Item.ReturnPolicy">
+                <th>Return Policy</th>
+                <td>Returns Accepted Within {{ selectedItemDetails.Item.ReturnPolicy.ReturnsWithin }}</td>
+              </tr>
+
+              <!-- Item Specifics -->
+              <ng-container *ngIf="selectedItemDetails.Item.ItemSpecifics?.NameValueList">
+                <tr *ngFor="let specific of selectedItemDetails.Item.ItemSpecifics.NameValueList">
+                  <th>{{ specific.Name }}</th>
+                  <td>{{ specific.Value[0] }}</td>
+                </tr>
+              </ng-container>
+
+            </tbody>
+          </table>
+  </div> <!-- Product Div Close-->
+  <div *ngSwitchCase="'Photos'"> <!-- Start Photo Div-->
+  
+      <div *ngIf="photos.length > 0" class="container mt-3 photos-div">
+        <div class="google-image-container">
+        <ng-container *ngFor="let photo of photos; let i = index">
+          <div class="image-column" *ngIf="i % 3 === 0">
+            <div *ngFor="let columnItem of photos.slice(i, i + 3)">
+              <a [href]="photo" target="_blank">
+              <img [src]="photo" alt="Photo">
+              </a>
+            </div>
+          </div>
+        </ng-container> 
+        </div>
+      </div>
+
+      <div *ngIf="photos.length === 0">
+        No photos available.
+      </div>
+
+     
+
+  </div> <!-- Close Photo Div-->
+  <div *ngSwitchCase="'Shipping'"> <!-- Start Shipping Div-->
+    <ng-container *ngIf="selectedItemDetails?.Item?.ItemID as itemId">
+      
+      <ng-container *ngIf="(getMatchedItemShippingInfo(itemId) | async) as matchedShippingInfo">
+        <table class="table text-white bg-dark table-dark table-striped">
+          <tbody>
+            <!-- Shipping Cost -->
+            <tr *ngIf="matchedShippingInfo?.[0]?.shippingServiceCost?.[0]?.__value__">
+              <th>Shipping Cost</th>
+              <td>{{ matchedShippingInfo[0].shippingServiceCost[0].__value__ }}</td>
+            </tr>
+  
+            <!-- Shipping Locations -->
+            <tr *ngIf="matchedShippingInfo?.[0]?.shipToLocations?.length">
+              <th>Shipping Locations</th>
+              <td>{{ matchedShippingInfo[0].shipToLocations[0] }}</td>
+            </tr>
+  
+            <!-- Handling Time -->
+            <tr *ngIf="matchedShippingInfo?.[0]?.handlingTime?.length">
+              <th>Handling Time</th>
+              <td>
+                {{ matchedShippingInfo[0].handlingTime[0] }}
+                {{ matchedShippingInfo[0].handlingTime[0] > 1 ? 'Days' : 'Day' }}
+              </td>
+            </tr>
+  
+            <!-- Expedited Shipping -->
+            <tr *ngIf="matchedShippingInfo?.[0]?.expeditedShipping?.length">
+              <th>Expedited Shipping</th>
+              <td>
+                <i *ngIf="matchedShippingInfo[0].expeditedShipping[0] === 'true'"
+                   class="material-icons" style="color: green;">check</i>
+                <i *ngIf="matchedShippingInfo[0].expeditedShipping[0] !== 'true'"
+                   class="material-icons" style="color: red;">close</i>
+              </td>
+            </tr>
+  
+            <!-- One Day Shipping -->
+            <tr *ngIf="matchedShippingInfo?.[0]?.oneDayShippingAvailable?.length">
+              <th>One Day Shipping</th>
+              <td>
+                <i *ngIf="matchedShippingInfo[0].oneDayShippingAvailable[0] === 'true'"
+                   class="material-icons" style="color: green;">check</i>
+                <i *ngIf="matchedShippingInfo[0].oneDayShippingAvailable[0] !== 'true'"
+                   class="material-icons" style="color: red;">close</i>
+              </td>
+            </tr>
+  
+            <!-- Return Accepted -->
+           
+            <tr *ngIf="matchedShippingInfo?.[0]?.returnsAccepted?.length">
+              <th>Return Accepted</th>
+              <td>
+                <i *ngIf="matchedShippingInfo[0].returnsAccepted[0] === 'true'"
+                   class="material-icons" style="color: green;">check</i>
+                <i *ngIf="matchedShippingInfo[0].returnsAccepted[0] !== 'true'"
+                   class="material-icons" style="color: red;">close</i>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </ng-container>
+    </ng-container>
+  </div><!-- Close Shipping Div-->
+  <div *ngSwitchCase="'Seller'"> <!-- Start Seller Div -->
+    <ng-container *ngIf="selectedItemDetails?.Item?.Seller">
+      <table class="table text-white bg-dark table-dark table-striped">
+        <tbody>
+
+
+          <!-- Capital store name-->
+          <tr *ngIf="selectedItemDetails.Item.Storefront?.StoreName">
+            <td colspan="2" class="text-center store-name-header">
+              {{ formatStoreName(selectedItemDetails.Item.Storefront.StoreName) }}
+            </td>
+          </tr>
+          
+
+
+
+          <!-- Feedback Score -->
+          <tr *ngIf="selectedItemDetails.Item.Seller.FeedbackScore !== undefined">
+            <th>Feedback Score</th>
+            <td>
+              <!-- <i class="material-icons" [style.color]="getFeedbackStarColor(selectedItemDetails.Item.Seller.FeedbackRatingStar)">
+                {{ selectedItemDetails.Item.Seller.FeedbackScore >= 10000 ? 'stars' : 'star_border' }}
+              </i> -->
+              {{ selectedItemDetails.Item.Seller.FeedbackScore }}
+            </td>
+          </tr>
+
+
+          <!-- Popularity -->
+          <tr *ngIf="selectedItemDetails.Item.Seller.PositiveFeedbackPercent !== undefined">
+            <th>Popularity</th>
+
+
+            <td>
+              <div class="green-circle">
+              {{ selectedItemDetails.Item.Seller.PositiveFeedbackPercent }}
+              </div>
+            </td>
+          </tr>
+          
+          <!-- Feedback Rating Star -->
+          <tr *ngIf="selectedItemDetails.Item.Seller.FeedbackRatingStar !== undefined">
+            <th>Feedback Rating Star</th>
+           
+  
+             
+              <td>
+                  <span *ngIf="selectedItemDetails.Item.Seller.FeedbackScore > 10000">
+                      <i class="material-icons" 
+                      [style.color]="sanitizeFeedbackRatingStar(selectedItemDetails.Item.Seller.FeedbackRatingStar)">stars</i>
+                  </span>
+                  <span *ngIf="selectedItemDetails.Item.Seller.FeedbackScore <= 10000">
+                      <i class="material-icons"
+                      [style.color]="selectedItemDetails.Item.Seller.FeedbackRatingStar">star_border</i>
+                  </span>
+              </td>
+          </tr>
+
+
+   
+          
+          
+          <!-- Top Rated -->
+          <tr *ngIf="selectedItemDetails.Item.Seller.TopRatedSeller !== undefined">
+            <th>Top Rated</th>
+            <td>
+              <i *ngIf="selectedItemDetails.Item.Seller.TopRatedSeller" class="material-icons" style="color: green;">check_circle</i>
+              <i *ngIf="!selectedItemDetails.Item.Seller.TopRatedSeller" class="material-icons" style="color: red;">cancel</i>
+            </td>
+          </tr>
+          
+          <!-- Store Name -->
+          <tr *ngIf="selectedItemDetails.Item.Storefront?.StoreName">
+            <th>Store Name</th>
+            <td>
+              <!-- <a [href]="selectedItemDetails.Item.Storefront.StoreURL" target="_blank"> -->
+                {{ selectedItemDetails.Item.Storefront.StoreName }}
+              <!-- </a> -->
+            </td>
+          </tr>
+
+          <tr *ngIf="selectedItemDetails.Item.Storefront?.StoreURL">
+            <th>Buy Product At</th>
+            <td class="storelink"><a href="{{ selectedItemDetails.Item.Storefront.StoreURL }}" style="color: green;text-decoration: none;" target="_blank">Store</a></td>
+          </tr>
+  
+        </tbody>
+      </table>
+    </ng-container>
+  </div><!-- Close Seller Div -->
+  <!--
+    https://svcs.ebay.com/MerchandisingService?OPERATION-NAME=getSimilarItems&SERVICE-NAME
+    =MerchandisingService&SERVICE-VERSION=1.1.0&CONSUMER-ID=WilliamL-hw2-PRD-aaf878574-a94ce998&RESPONSE-DATA-FORMAT=JSON&REST- 
+    PAYLOAD&itemId=394884844909&maxResults=20
+  -->
+  <div *ngSwitchCase="'Similar Products'"> <!-- Similar Products start div-->
+    <div *ngIf="similarProducts && similarProducts.length > 0" class="similar-products">
+
+      <div class="container dropdown-container">
+
+  
+
+        <select [(ngModel)]="sortCategory" (change)="sortProducts()" class="similardrops">
+          <option value="default">Default</option>
+          <option value="productName">Product Name</option>
+          <option value="daysLeft">Days Left</option>
+          <option value="price">Price</option>
+          <option value="shippingCost">Shipping Cost</option>
+        </select>
+      
+
+      
+        <select [(ngModel)]="sortOrder"  [disabled]="sortCategory === 'default'" (change)="sortProducts()" class="similardrops">
+          <option value="asc">Ascending</option>
+          <option value="desc">Descending</option>
+        </select>
+
+      </div>
+      
+      <div *ngFor="let product of getDisplayedProducts()" class="product-card">
+        <div class="product-image-container">
+          <img [src]="product.imageURL" [alt]="product.title" class="product-image">
+        </div>
+        
+        <div class="product-details">
+          <p class="product-title">{{ product.title }}</p>
+          <p class="product-price">Price: {{ product.buyItNowPrice['__value__'] | currency }}</p>
+          <p class="product-shipping-cost">Shipping Cost: {{ product.shippingCost['__value__'] | currency }}</p>
+          <p class="card-text">Days Left: {{ extractDays(product.timeLeft) }}</p>
+ 
+        </div>
+      </div>
+      <button *ngIf="sortedProducts.length > 5" (click)="toggleShowAll()" class="btn btn-primary show-hide-button">
+        {{ showAll ? 'Show Less' : 'Show More' }}
+      </button>
+    </div>
+    <div *ngIf="!similarProducts || similarProducts.length === 0">
+      <div class="norecords bg-white">
+        <div class="alert alert-warning full-width-alert" role="alert">
+          No Records.
+        </div>
+      </div>
+    </div>
+  </div> <!-- Similar Products Close Div-->
+
+  </div> <!-- Tab Div Close-->
+</div>
+</ng-container>
+</div>
+
+</body>
