@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" type="text/css" href="../static/style.css">
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    
+    <title>Ebay Search Engine</title>
+    
+</head>
+<body>
+    <div id="logo">
+     
+        <a href="https://www.ebay.com/" target="_blank"><img src="../static/eBayLogo.png" alt="Description of the image" style="width: 180px; height: auto;"></a>
+       
+        <h2>
+            Shopping
+        </h2>
+      
+
+    </div>
+    
+    <div class="center-container">
+        <fieldset id="org">
+        <form method="GET" id="myform" action="/search">
+            
+                <div class = 'answer'>
+                    <label for="Keywords"><b>Keywords</b><span class="required-asterisk">*</span>:</label>
+                    <input type="text" id="Keywords" name='Keywords'required>
+                </div>
+                <hr>
+                <div class = 'answer'><b>Price range:</b> From  
+                    <input type="number" name="min-price" id="min-price" step="0.1" >
+                    <span id="min-price"></span> 
+                    to  
+                    <input type="number" name="max-price" id="max-price" step="0.1"> 
+                    <span id="max-price"></span></div>
+                <hr>
+                <div class = 'answer'>
+                   
+                    <label><b>Condition:</b></label>
+                    <input type="checkbox" name="choice" value = "1000" id ='Condition'>    
+                    <label for="Condition">New</label>
+                    <input type="checkbox" name="choice" value = "3000" id ='Condition2'>
+                    <label for="Condition2">Used</label>
+                    <input type="checkbox" name="choice" value = "4000"id='Condition3'>
+                    <label for="Condition3">Very Good</label>
+                    <input type="checkbox" name="choice" value = "5000" id ='Condition4'>
+                    <label for="Condition4">Good</label>
+                    <input type="checkbox" name="choice" value = "6000" id="Condition5">
+                    <label for="Condition5">Acceptable</label>
+
+                </div>
+                <hr>
+                <div class = 'answer'>
+                    <label><b>Seller:</b></label>
+                    <input type="checkbox" name="seller" value = "Return Accepted" id ='sell'>
+                    <label for="sell">Return Accepted</label>
+                </div>
+                <hr>
+                <div class = 'answer'>
+                    <label><b>Shipping:</b></label>
+                    <input type="checkbox" name="freeshipping" value = "Free" id ='ship'>
+                    <label for="ship">Free</label>
+                    <input type="checkbox" name="expeditedshipping" value = "Expedited" id="expedited">
+                    <label for="expedited">Expedited</label>
+                </div>
+                <hr>
+                <div class = 'answer'>
+                    <label for="SortBy"><b>Sort By:</b></label>
+                    <select name="sortby" id ='SortBy'>
+                        <option value="BestMatch" selected>Best Match</option>
+                        <option value="CurrentPriceHighest">Price: highest first</option>
+                        <option value="PricePlusShippingHighest">Price + Shipping: highest first</option>
+                        <option value="PricePlusShippingLowest">Price + Shipping: lowest first</option>
+                    </select>
+                </div>
+                <hr>
+                
+
+                
+                <button type="button" id="clearbutton">Clear</button> <button type="submit" id="searchbutton">Search</button>
+                    
+        </form>
+        </fieldset>
+    </div>
+    <div id="search-results">
+       
+        
+    </div>
+    <div id="go-back-button-container"></div>
+    <div id ="search-results-single">
+        
+    </div>
+    
+</body>
+<script src="../static/script.js"></script>
+</html>
