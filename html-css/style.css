@@ -1,0 +1,138 @@
+/* this is the styling sheet*/
+body{
+	margin-left: 50px;
+	margin-right: 50px;
+	width:1200px;
+	margin-top: 0px;
+	margin-bottom: 0px;
+	
+}
+hr{
+	padding: 0px;
+	margin-top: 20px;
+	margin-left: -50px;
+
+}
+h1{
+	margin: 0px;
+	padding: 0px;
+	background-color: #ffffff;
+	color:#0000ff;
+	
+}
+li{
+	font-family: Arial, Helvetica, sans-serif;
+
+}
+.front{
+	background-color: #ffffff;
+	padding-top: 20px;
+}
+.text-overlay {
+    position: absolute;
+    top: 35px;
+    left: 50px;
+    background-color: rgba(255, 255, 255, 0); /* Transparent background */
+    padding: 10px; /* Adjust padding as needed */
+    font-size: 40px; /* Adjust font size as needed */
+    color: #0000ff; /* Text color */
+    font-weight: bolder;
+}
+.cutlery{
+	position: relative;
+
+	width:800px;
+	height: 600px;
+}
+.static-pic{
+	position: fixed;
+	z-index: -1;
+	width: 850px;
+	
+	top:-50px;
+	
+
+}
+.static-pic img{
+	width: 100%;
+	box-sizing: border-box;
+	display: block;
+	height: 700px;
+}
+
+.button {
+    position: absolute;
+    top: 180px; /* to be at the middle */
+    left: 65px; /* add 10 since the padding*/
+    padding: 10px 15px; /* add some padding to make it more pleasant to look */
+    background-color: #ffffff; /* Button background color */
+    color: #000000; /* Button text color */
+    text-decoration: none;
+    border: none;
+    border-radius: 0px;
+    font-family: Arial, Helvetica, sans-serif;
+}
+
+.tab-container{
+	font-size: 12px;
+	margin-left: -20px;
+	margin-top: -10px;
+	padding: 20px;
+	display:flex;
+	list-style-type: none;
+	
+}
+.tab-container li{
+	margin-right:10px;
+}
+.tab-container a{
+	text-decoration: none;
+}
+
+.title_sub{
+	padding-top: 10px;
+	margin-left: -20px;
+	width:900px;
+	font-weight: bolder;
+}
+.dss{
+	margin-top: 40px;
+	margin-bottom: 40px;
+	text-align: center;
+	font-size:22px;
+	line-height: 0.2;
+
+}
+
+
+.image-container{
+	
+	display: flex;
+	width: 900px;
+	
+}
+.comment{
+	color:#0000ff;
+	text-align: center;
+	margin-top: 40px;
+	margin-bottom: 60px;
+	font-size: 18px;
+	font-weight: bold;
+}
+
+.left{
+	margin-right: 25px;
+	
+}
+.left img{
+	width:412.5px;
+	height: 412.5px;
+}
+.all{
+	margin-top: -130px;
+	background-color:#ffffff;
+}
+.right img{
+	width:412.5px;
+	height: 412.5px;
+}
